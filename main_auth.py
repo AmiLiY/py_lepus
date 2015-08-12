@@ -130,7 +130,7 @@ class AddUserHandler(BaseHandler):
     def get(self):
         username = self.get_secure_cookie("user")
         curpath =  self.request.path
-        self.render(curpath[1:]+'.html',page=curpath,menus=get_menu(username),lang=lang,error_code=0,validation_errors='')
+        self.render(curpath[1:]+'.html',page="/user/index",menus=get_menu(username),lang=lang,error_code=0,validation_errors='')
     def post(self):
         #username = self.get_secure_cookie("user")
         curpath =  self.request.path
@@ -149,7 +149,7 @@ class EditUserHandler(BaseHandler):
         username = self.get_secure_cookie("user")
         curpath =  self.request.path
         record = self.getrecord(user_id)
-        self.render('user/edit.html',page=curpath,menus=get_menu(username),lang=lang,error_code=0,validation_errors='',record=record)
+        self.render('user/edit.html',page="/user/index",menus=get_menu(username),lang=lang,error_code=0,validation_errors='',record=record)
     def post(self):
         #username = self.get_secure_cookie("user")
         curpath =  self.request.path
