@@ -1,0 +1,81 @@
+{% extends "../base.html" %}
+{% block content %}
+<div class="header">  
+            <h1 class="page-title">{{lang["user"]}} {{lang["add"]}}</h1>
+</div>
+
+<ul class="breadcrumb">
+            <li><a href="/">{{lang["home"]}}</a> <span class="divider">/</span></li>
+            <li class="active">{{lang["permission_system"]}}</li><span class="divider">/</span></li>
+            <li class="active">{{lang["user"]}}</li>
+</ul>
+
+<div class="container-fluid">
+<div class="row-fluid">
+
+<form name="form" class="form-horizontal" method="post" action="/user/add" >
+<input type="hidden" name="submit" value="add"/> 
+<div class="btn-toolbar">
+    <button type="submit" class="btn btn-primary"><i class="icon-save"></i> {{lang["save"]}}</button>
+    <a class="btn btn " href="/user/index"><i class="icon-list"></i> {{lang["list"]}}</a>
+  <div class="btn-group"></div>
+</div>
+
+{% if error_code!=0 %}
+<div class="alert alert-error">
+<button type="button" class="close" data-dismiss="alert">×</button>
+{{ validation_errors }}
+</div>
+{% end %}
+
+<div class="well">
+   
+   <div class="control-group">
+    <label class="control-label" for="">*{{lang["username"]}}</label>
+    <div class="controls">
+      <input type="text" id="username"  name="username" value="" >
+    </div>
+   </div>
+   <div class="control-group">
+    <label class="control-label" for="">*{{lang["password"]}}</label>
+    <div class="controls">
+      <input type="password" id="password"  name="password" value="" >
+    </div>
+   </div>
+   <div class="control-group">
+    <label class="control-label" for="">*{{lang["confirm_password"]}}</label>
+    <div class="controls">
+      <input type="password" id="confirm_password"  name="confirm_password" value="" >
+    </div>
+   </div>
+   <div class="control-group">
+    <label class="control-label" for="">*{{lang["realname"]}}</label>
+    <div class="controls">
+      <input type="text" id=""  name="realname" value="" >
+    </div>
+   </div>
+   <div class="control-group">
+    <label class="control-label" for="">{{lang["email"]}}</label>
+    <div class="controls">
+      <input type="text" id=""  name="email" value="" >
+    </div>
+   </div>
+   <div class="control-group">
+    <label class="control-label" for="">{{lang["mobile"]}}</label>
+    <div class="controls">
+      <input type="text" id=""  name="mobile" value="" >
+    </div>
+   </div>
+    <div class="control-group">
+    <label class="control-label" for="">*{{lang["status"]}}</label>
+    <div class="controls">
+        <select name="status" id="status" class="input-small">
+         <option value="1"  >{{lang["enabled"]}}</option>
+         <option value="0"  >{{lang["disable"]}}</option>
+        </select>
+    </div>
+   </div>
+   
+</div>
+</form>
+{% end %}

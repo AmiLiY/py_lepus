@@ -1,0 +1,65 @@
+{% extends "../base.html" %}
+{% block content %}
+<div class="header">  
+            <h1 class="page-title">{{lang["privilege"]}} {{lang["list"]}}</h1>
+</div>
+     
+<ul class="breadcrumb" >
+            <li><a href="/">{{lang["home"]}}</a> <span class="divider">/</span></li>
+            <li class="active">{{lang["permission_system"]}}</li><span class="divider">/</span></li>
+            <li class="active">{{lang["privilege"]}}</li>
+</ul>
+
+<div class="container-fluid">
+<div class="row-fluid">
+ 
+<div class="btn-toolbar" >
+    <a class="btn btn-primary" href="/privilege/add" title="{{lang["edit"]}}"><i class="icon-plus"></i> {{lang["add"]}}</a>
+  <div class="btn-group"></div>
+</div>
+
+<div class="well">
+    <table class="table table-hover ">
+      <thead>
+        <tr>
+          <th>{{lang["privilege_title"]}}</th>
+          <th>{{lang["action"]}}</th>
+          <th>{{lang["menu"]}}</th>
+          <th>{{lang["display_order"]}}</th>
+          <th style="width: 30px;"></th>
+        </tr>
+      </thead>
+      <tbody>
+ {% if datalist%}
+   {% for item in datalist %}
+     <tr>
+          <td>{{item['privilege_title']}}</td>
+          <td>{{item['action']}}</td>
+          <td>{{item['menu_title']}}</td>
+          <td>{{item['display_order']}}</td>
+          <td>
+              <a href="/privilege/edit/{{item['privilege_id']}}"><i class="icon-pencil"></i></a>&nbsp;
+              <a href="/privilege/forever_delete/{{item['privilege_id']}}" class="confirm_delete" title="{{lang["forever_delete"]}}"<i class="icon-remove"></i></a>
+          </td>
+     </tr>
+ {% end %}
+
+  {% else %}
+<tr>
+<td colspan="4">
+<font color="red">{{lang["no_record"]}} </font>
+</td>
+</tr>
+ {% end %}      
+      </tbody>
+    </table>
+</div>
+
+
+
+<script type="text/javascript">
+	$(' .confirm_delete').click(function(){
+		return confirm("{{lang["forever_delete_confirm"]}}");	
+	});
+</script>
+{% end %}

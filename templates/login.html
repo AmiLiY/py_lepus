@@ -1,0 +1,70 @@
+<html>
+<head>
+    <title>
+    opertion后台用户登录
+    </title>
+    <link href="{{ static_url("css/login.css")}}" rel="stylesheet" type="text/css">
+    <script src="{{ static_url("js/jquery-latest.js")}}"></script>
+</head>
+<body>
+    <form action="/login" method="POST" id="form1">
+    {% raw xsrf_form_html() %}
+    <div id="UpdatePanel1">
+     <div>
+<div id="login_box">
+	<div class="login_top" style="width:100%">
+    	<div style="width:20%;float:left;"><img src="{{ static_url("img/logo.png")}}"></div>
+       <div style="width:78%"><span style="background-color: #FFFFFF;color: #FF0000;font-weight: bolder;height: 25px;padding-top: 5px;text-align: center;"></span></div>
+        </div>
+    <div class="login_bj">
+    	<div class="login_right">
+        	<div class="login_textbox">
+            	<div>
+                </div>
+                <div>
+                  <dl>
+                       <dt>用户名</dt>
+                       <dd><img src="{{ static_url("img/login2_06.gif")}}"></dd>
+                       <dd>
+                       <input name="username" type="text" id="username" class="login_text" value='admin'></dd>
+                    </dl><div class="clear"></div>
+                </div>
+                <div>
+                    <dl>
+                       <dt>密 &nbsp;&nbsp;码</dt>
+                       <dd><img src="{{ static_url("img/login2_08.gif")}}"></dd>
+                       <dd><input name="password" value='' type="password" id="password" class="login_text"></dd>
+                 <input type="hidden" name="next" value={{next}} readonly>
+                    </dl><div class="clear"></div>
+                </div>	
+                <div class="login_bottom"><input type="image" name="Button1" id="submit" text="" src="{{ static_url("img/login2_03.gif")}}">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+        $(function() {
+            $('input').keyup(function() {
+                var a = $('#username').val().length;
+                var b = $('#password').val().length;
+
+                if(a && b) {
+                    $('#submit').removeAttr('disabled');
+                } else {
+                    $('#submit').attr('disabled','disabled');
+                }
+               }
+            )
+        });
+    </script>
+<div id="foot">
+    <div class="xian">
+        <div class="foot_box"><a href="http://www.hrd800.com">关于我们</a> | <a href="http://www.hrd800.com"> sss </a> | <a href="http://www.hrd800.com"> 联系我们</a>  <br><span>203-206</span>室<span> (201901)   TEL: 021-58390211 </span></div>
+  </div>
+</div>
+</div>
+</div>
+    </form>
+</body>
+</html>
