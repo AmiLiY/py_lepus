@@ -6,7 +6,7 @@ from models.tools import user_map,get_menu,op_cursor,DatetimeEncoder
 from language.zh_hans.mtop_menu_lang import lang
 import json
 from config.sqlmap import *
-from medels.light_merge import light_merge
+from models.light_merge import light_merge
 
 class LightMergeHandler(BaseHandler):
     @tornado.web.authenticated
