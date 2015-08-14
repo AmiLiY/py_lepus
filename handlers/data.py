@@ -4,7 +4,6 @@ from models.tools import user_map,get_menu,op_cursor,DatetimeEncoder
 from language.zh_hans.mtop_menu_lang import lang
 import json
 from config.sqlmap import *
-import json
 
 class TableHandler(BaseHandler):
 

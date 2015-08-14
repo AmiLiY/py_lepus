@@ -11,6 +11,7 @@ import md5
 from language.zh_hans.mtop_menu_lang import lang
 from tornado.options import define, options
 from handlers.data import TableHandler
+from handlers.gitlab import BranchesHandler,LightMergeHandler
 from handlers.base import BaseHandler,LoginHandler,LogoutHandler
 from models.tools import user_map,get_menu,op_cursor
 #from models.user import User
@@ -45,6 +46,8 @@ class Application(tornado.web.Application):
         (r'/user/edit', EditUserHandler),
         (r'/role/index', DataHandler),
         (r'/privilege/index', DataHandler),
+        (r'/projects/(.*)/branches', BranchesHandler),
+        (r'/projects/lightmerge', LightMergeHandler),
         ]
         tornado.web.Application.__init__(
             self, handlers, debug=True,
