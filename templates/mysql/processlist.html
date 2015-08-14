@@ -1,0 +1,60 @@
+{% extends "../base.html" %}
+<!DOCTYPE html>
+{% block header %}
+    <script type="text/javascript" src={{ static_url("js/ext-all.js")}}></script>
+    <script data-require="jquery@*" data-semver="2.0.3" src={{ static_url("js/jquery-2.0.3.min.js") }}></script>
+    <script data-require="bootstrap@2.3.2" data-semver="2.3.2" src={{ static_url("js/bootstrap.min.js") }}></script>
+    <script type="text/javascript" charset="utf-8" src={{ static_url("js/angular.min.js") }}></script>
+    <script src={{ static_url("js/common.js") }}></script>
+{% end %}
+{% block content %}
+    <div class="panel panel-primary">
+        <div class="panel-heading"><span class="glyphicon glyphicon-hdd"></span> {{ title }}</div>
+        <form class="form-search">
+            <input ng-model="searchText" type="text" >
+            <button ng-click="reset()" class="btn btn-success">重置</button>
+        </form>
+        <div>
+        {% for col in heads %}
+            {{ lang.get(col,col) }}:<input onclick="h('{{ col }}')" type=checkbox value="">|
+        {% end %}
+        </div>
+        <table class="table table-striped table-hover table-bordered">
+            <thead>
+            <tr>
+                <th>
+                    id
+                </th>
+                {% for col in heads %}
+                 <th ng-click="predicate='{{ col }}'; reverse=!reverse" class="sortBtn {{ col }}">
+                    <span ng-if="predicate=='{{ col }}'" ng-switch on="reverse">
+                    </span>
+                   {{ lang.get(col,col) }}
+                </th>
+                {% end %}
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in data | filter:searchText | filter:status | orderBy:predicate:reverse">
+               <td>// $index + 1 // </td>
+               {% for col in heads %}
+               <td class="{{ col }}"><span style="color:green;"> // item.{{ col }} // </span></td>
+               {% end %}
+            </tr>
+            </tbody>
+        </table>
+    </div>
+<script>
+h = function (id){
+  $("."+id).toggle();
+}
+
+$(document).ready(function(){
+//  $(".connectionString").hide();
+});
+showAdviceDetail = function (advicevalue){
+	Ext.Msg.alert('白名单',advicevalue);
+}
+</script>
+{% end %}
+

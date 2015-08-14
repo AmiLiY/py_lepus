@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="myApp">
   <head>
     <meta charset="utf-8">
     <title>{{ lang['lepus'] }} {{ lang['database_monitor_system'] }}</title>
@@ -38,8 +38,9 @@
             font-weight: bold;
         }
     </style>
+    {% block header %}{% end %}
   </head>
-  <body class=""> 
+  <body class="" ng-controller="mainCtrl"> 
     
 
     <div class="navbar" style="font-family: 微软雅黑;position:fixed;width:100%;">
@@ -90,13 +91,13 @@
         <a href="/" class="nav-header" ><i class="icon-comment"></i>{{ lang['dashboard'] }}</a>
           {% for menu in menus %}
             <a href="#{{ menu["parent_url"] }}" class="nav-header collapsed" data-toggle="collapse">
-              <i class="{{ menu['parent_icon'] }}"></i>{{ lang['_'+menu['parent_title']]}}<i class="icon-chevron-up" >
+              <i class="{{ menu['parent_icon'] }}"></i>{{ lang.get('_'+menu['parent_title'],menu['parent_title'])}}<i class="icon-chevron-up" >
               </i>
             </a>
             <ul id="{{menu['parent_url']}}" class="nav nav-list collapse {% if page in menu['sub_menus'].split(',') %} in {% end %} ">
               {% for sub_menu in menu["sub_menu"] %}
               <li{% if page == sub_menu["menu_url"] %} class="active"{% end %}>
-               <a href="{{ sub_menu['menu_url']}}"><i class="{{ sub_menu['menu_icon'] }}"></i>{{ lang['_'+sub_menu['menu_title']] }}</a>
+               <a href="{{ sub_menu['menu_url']}}"><i class="{{ sub_menu['menu_icon'] }}"></i>{{ lang.get('_'+sub_menu['menu_title'],sub_menu['menu_title']) }}</a>
               </li>
      	      {% end %}
             </ul>
