@@ -1,12 +1,11 @@
 #!/bin/evn python26
 #--coding:utf-8--
-from base import BaseHandler
+from base import BaseHandler,ChatSocketHandler
 import tornado.web
 from models.tools import user_map,get_menu,op_cursor,DatetimeEncoder
 from language.zh_hans.mtop_menu_lang import lang
 import json
 from config.sqlmap import *
-from models.light_merge import light_merge
 
 class LightMergeHandler(BaseHandler):
     @tornado.web.authenticated
@@ -14,14 +13,8 @@ class LightMergeHandler(BaseHandler):
         project = self.get_argument('project_id')
         branches = self.get_argument('branches')
         username = self.get_secure_cookie("user")
-        self.do_merge(project,branches)
+        do_merge(project,branches)
         self.write('success')
-
-    def do_merge(self,project_id,branches):
-        branches = branches.split(',')
-        for branche in branches:
-            light_merge(project_id,branche)
-        return 1
 
 class BranchesHandler(BaseHandler):
 
@@ -41,6 +34,7 @@ class BranchesHandler(BaseHandler):
     @tornado.web.authenticated
     def post(self,prj_id):
         username = self.get_secure_cookie("user")
+        #ChatSocketHandler.send_updates("succece")
         self.write(json.dumps(self.getDatalist(),cls=DatetimeEncoder))
 
     def getDatalist(self):

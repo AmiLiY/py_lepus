@@ -12,7 +12,7 @@ from language.zh_hans.mtop_menu_lang import lang
 from tornado.options import define, options
 from handlers.data import TableHandler
 from handlers.gitlab import BranchesHandler,LightMergeHandler
-from handlers.base import BaseHandler,LoginHandler,LogoutHandler
+from handlers.base import BaseHandler,LoginHandler,LogoutHandler,ChatSocketHandler
 from models.tools import user_map,get_menu,op_cursor
 #from models.user import User
 define("port", default=8001, help="run on the given port", type=int)
@@ -48,6 +48,7 @@ class Application(tornado.web.Application):
         (r'/privilege/index', DataHandler),
         (r'/projects/(.*)/branches', BranchesHandler),
         (r'/projects/lightmerge', LightMergeHandler),
+        (r"/websocket", ChatSocketHandler), 
         ]
         tornado.web.Application.__init__(
             self, handlers, debug=True,

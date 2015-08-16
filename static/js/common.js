@@ -7,7 +7,7 @@ DEMO.config(function($interpolateProvider) {
 });
 
 var pathname = window.location.pathname;
-console.log("")
+//console.log("ss");
 // console.log($.param({"ip":"123"}))
 DEMO.controller('mainCtrl',['$scope', '$http', function($scope,$http){
     $scope.status = 0;
