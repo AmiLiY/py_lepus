@@ -35,7 +35,7 @@ user_info_sql = "SELECT * FROM `admin_user` WHERE user_id={user_id}"
 update_user_sql = "update `admin_user` set `password`='{password}',`realname`='{realname}',`email`='{email}', `mobile`='{mobile}',`status`='{status}' where `user_id`='{user_id}'"
 update_user_sql1 = "update `admin_user` set `realname`='{realname}',`email`='{email}', `mobile`='{mobile}',`status`='{status}' where `user_id`='{user_id}'"
 delete_user_sql = "delete from `admin_user` where user_id={user_id}"
-
+menu_index_sql = "SELECT * FROM `admin_menu`"
 
 class Application(tornado.web.Application):
     def __init__(self):
@@ -56,7 +56,7 @@ class Application(tornado.web.Application):
         (r'/projects/(.*)/branches', BranchesHandler),
         (r'/projects/lightmerge', LightMergeHandler),
         (r"/websocket", ChatSocketHandler), 
-        (r"/menu/index", MenutHandler), 
+        (r"/menu/index", DataHandler), 
         ]
         tornado.web.Application.__init__(
             self, handlers, debug=True,
@@ -80,6 +80,7 @@ class DataHandler(BaseHandler):
         curpath =  self.request.path
         #user = User()
         datalist = self.get_user_list()
+        print datalist
         self.render(curpath[1:]+'.html',page=curpath,menus=get_menu(username),lang=lang,datalist = datalist)
         
     def get_user_list(self):
@@ -87,6 +88,7 @@ class DataHandler(BaseHandler):
         users = op_cursor.fetchall()
         head = [c[0] for c in op_cursor.description]
         datalist = []
+        print users
         for user in users:
             datalist.append(dict(zip(head,user)))
         return datalist

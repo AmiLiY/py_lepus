@@ -1,0 +1,65 @@
+{% extends "../base.html" %}
+{% block content %}
+<div class="header">  
+            <h1 class="page-title">{{ lang["menu"] }} {{ lang["list"] }}</h1>
+</div>
+     
+<ul class="breadcrumb">
+            <li><a href="/">{{ lang["home"] }}</a> <span class="divider">/</span></li>
+            <li class="active">{{ lang["permission_system"] }}</li><span class="divider">/</span></li>
+            <li class="active">{{ lang["menu"] }}</li>
+</ul>
+
+<div class="container-fluid">
+<div class="row-fluid">
+ 
+<div class="btn-toolbar">
+    <a class="btn btn-primary " href="/menu/add"><i class="icon-plus"></i> { lang["add"] }}</a>
+  <div class="btn-group"></div>
+</div>
+
+<div class="well">
+    <table class="table table-hover ">
+      <thead>
+        <tr>
+          <th>{{ lang["menu"] }}</th>
+          <th>{{ lang["url"] }}</th>
+          <th>{{ lang["icon"] }}</th>
+          <th>{{ lang["display"] }}</th>
+          <th>{{ lang["display_order"] }}</th>
+          <th style="width: 30px;"></th>
+        </tr>
+      </thead>
+      <tbody>
+{% if datalist %}
+{% for item in datalist %}
+     <tr>
+          <td>{{item['menu_title'] }}{{item['menu_title'] }}</td>
+          <td>{{item['menu_url'] }}</td>
+          <td>{{item['menu_icon'] }}</td>
+          <td>{{item['status'] }}</td>
+          <td>{{item['display_order'] }}</td>
+          <td>
+              <a href="/menu/edit/{{item['menu_id']}}" title="{{ lang["edit"] }}" ><i class="icon-pencil"></i></a>&nbsp;
+              <a href="/menu/forever_delete/{{item['menu_id']}}" class="confirm_delete" title="{{ lang["forever_delete"] }}" ><i class="icon-remove"></i></a>
+          </td>
+     </tr>
+  {% end %}
+  {% else %}
+<tr>
+<td colspan="6">
+<font color="red">{{ lang["no_record"] }} </font>
+</td>
+</tr>
+{% end %}
+      </tbody>
+    </table>
+</div>
+
+
+<script type="text/javascript">
+	$(' .confirm_delete').click(function(){
+		return confirm("{{ lang["forever_delete_confirm"] }}");	
+	});
+</script>
+{% end %}
