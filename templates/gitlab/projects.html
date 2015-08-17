@@ -1,0 +1,33 @@
+{% extends "../base.html" %}
+<!DOCTYPE html>
+{% block header %}
+    <script type="text/javascript" src={{ static_url("js/ext-all.js")}}></script>
+    <script data-require="jquery@*" data-semver="2.0.3" src={{ static_url("js/jquery-2.1.4.min.js") }}></script>
+    <script data-require="bootstrap@2.3.2" data-semver="2.3.2" src={{ static_url("js/bootstrap.min.js") }}></script>
+    <script type="text/javascript" charset="utf-8" src={{ static_url("js/angular.min.js") }}></script>
+    <script src={{ static_url("js/common.js") }}></script>
+{% end %}
+{% block content %}
+    <div class="panel panel-primary">
+        <div class="panel-heading"><span class="glyphicon glyphicon-hdd"></span> {{ title }}</div>
+        <table class="table table-striped table-hover table-bordered">
+            <thead>
+            <tr>
+                {% for col in heads %}
+                 <th ng-click="predicate='{{ col }}'; reverse=!reverse" class="sortBtn lp_{{ col }}">
+                    <span ng-if="predicate=='{{ col }}'" ng-switch on="reverse">
+                    </span>
+                   {{ lang.get(col,col) }}
+                </th>
+                {% end %}
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in data">
+                   <td class="lp_{{ col }}"><span style="color:green;"> // item.id // </span></td>
+                   <td class="lp_{{ col }}"><span style="color:green;"><a href="/projects\// item.name ///branches"> // item.name // </span></a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+{% end %}

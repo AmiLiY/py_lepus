@@ -6,7 +6,7 @@ import time,md5
 import logging
 import traceback
 from models.tools import user_map,get_menu
-from models.cmds import do_merge
+
 class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         username = self.get_secure_cookie("user")
@@ -43,47 +43,3 @@ class LogoutHandler(BaseHandler):
         self.clear_cookie("user")
         self.redirect("/")
 
-class ChatSocketHandler(tornado.websocket.WebSocketHandler): 
-    cache = [] 
-    client_map = {}
-    cache_size = 200 
-
-    def allow_draft76(self): 
-        # for iOS 5.0 Safari  
-        return True 
-
-    def open(self): 
-        ChatSocketHandler.client_map[id(self)] = self
-        logging.info(u"新客户端连接" +str(id(self)))
-
-    def on_close(self): 
-        #del ChatSocketHandler.client_map[id(self)]
-        print '客户端断开连接'
-        
-    @classmethod 
-    def update_cache(cls, chat): 
-        cls.cache.append(chat) 
-        if len(cls.cache) > cls.cache_size: 
-            cls.cache = cls.cache[-cls.cache_size:] 
-
-    @classmethod 
-    def send_updates(cls, chat): 
-        if 1:
-            try: 
-                #print cls.client_map
-                #print repr(cls.xsrf_token)
-                print id(cls)
-                ChatSocketHandler.client_map[id(cls)].write_message(chat) 
-            except: 
-                logging.error("Error sending message", exc_info=True) 
-        else:
-            logging.error("客户端未连接连接")
-
-    def on_message(self, message): 
-        logging.info("got message %r", message)
-        cmd,parements = message.split(",")[0],message.split(",")[1:]
-        try:
-            globals().get(cmd)(id(self),parements[0],parements[1:])
-        except:
-            print dir(traceback)
-            ChatSocketHandler.client_map[id(self)].write_message(traceback.format_exc())

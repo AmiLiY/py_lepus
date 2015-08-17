@@ -11,9 +11,15 @@ import md5
 from language.zh_hans.mtop_menu_lang import lang
 from tornado.options import define, options
 from handlers.data import TableHandler
-from handlers.gitlab import BranchesHandler,LightMergeHandler
-from handlers.base import BaseHandler,LoginHandler,LogoutHandler,ChatSocketHandler
+from handlers.gitlab import ProjectsHandler,BranchesHandler,LightMergeHandler
+from handlers.base import BaseHandler,LoginHandler,LogoutHandler
+from handlers.message import ChatSocketHandler
 from models.tools import user_map,get_menu,op_cursor
+
+url = 'http://git.hrd800.net/api/v3'
+token = 'KaK4UsgHhh6UY8W47N2R'
+headers = {"PRIVATE-TOKEN": token}
+
 #from models.user import User
 define("port", default=8001, help="run on the given port", type=int)
 WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -46,9 +52,11 @@ class Application(tornado.web.Application):
         (r'/user/edit', EditUserHandler),
         (r'/role/index', DataHandler),
         (r'/privilege/index', DataHandler),
+        (r'/projects/?', ProjectsHandler),
         (r'/projects/(.*)/branches', BranchesHandler),
         (r'/projects/lightmerge', LightMergeHandler),
         (r"/websocket", ChatSocketHandler), 
+        (r"/menu/index", MenutHandler), 
         ]
         tornado.web.Application.__init__(
             self, handlers, debug=True,

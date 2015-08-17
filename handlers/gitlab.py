@@ -1,11 +1,19 @@
 #!/bin/evn python26
 #--coding:utf-8--
-from base import BaseHandler,ChatSocketHandler
+from base import BaseHandler
+from handlers.message import ChatSocketHandler
 import tornado.web
 from models.tools import user_map,get_menu,op_cursor,DatetimeEncoder
+from models.projects import Projects
 from language.zh_hans.mtop_menu_lang import lang
 import json
 from config.sqlmap import *
+import requests
+
+url = 'http://git.hrd800.net/api/v3'
+token = 'KaK4UsgHhh6UY8W47N2R'
+#token = 'ZzYmxs6UWpA6eqzg6gcK'
+headers = {"PRIVATE-TOKEN": token}
 
 class LightMergeHandler(BaseHandler):
     @tornado.web.authenticated
@@ -16,30 +24,55 @@ class LightMergeHandler(BaseHandler):
         do_merge(project,branches)
         self.write('success')
 
+class ProjectsHandler(BaseHandler):
+    def __init__(self,*request,**kwargs):
+        super(ProjectsHandler,self).__init__(request[0], request[1])
+        self.heads = ['id','name']
+        #self.rdsinfo =[["master","1"],["master1","11"]]
+
+    @tornado.web.authenticated
+    def get(self):
+        username = self.get_secure_cookie("user")
+        curpath = "/projects"
+        title = lang.get(curpath[1:],curpath[1:])
+        self.render('gitlab\projects.html',page=curpath,lang=lang,menus=get_menu(username),heads=self.heads,urllist=get_menu(username),title=title)
+
+    @tornado.web.authenticated
+    def post(self):
+        username = self.get_secure_cookie("user")
+        #ChatSocketHandler.send_updates("succece")
+        r = requests.get("{url}//projects/".format(url=url),headers = headers)
+        res = r.json()
+        for i in res:
+            Projects.projects[i["name"]] = i["id"]
+        self.write(json.dumps(res,cls=DatetimeEncoder))
+
 class BranchesHandler(BaseHandler):
 
     def __init__(self,*request,**kwargs):
         super(BranchesHandler,self).__init__(request[0], request[1])
-        self.heads = ['name','id']
-        self.rdsinfo =[["master","1"],["master1","11"]]
+        self.heads = ['name']
+        #self.rdsinfo =[["master","1"],["master1","11"]]
 
     @tornado.web.authenticated
-    def get(self,prj_id):
+    def get(self,prj_name):
+        prj_id= Projects.projects.get(prj_name,prj_name)
         username = self.get_secure_cookie("user")
-        curpath = self.request.path
-        print prj_id
+        curpath = "/projects"
         title = lang.get(curpath[1:],curpath[1:])
-        self.render('gitlab\processlist.html',page=curpath,lang=lang,menus=get_menu(username),heads=self.heads,urllist=get_menu(username),title=title)
+        self.render(r'gitlab\branches.html',page=curpath,lang=lang,menus=get_menu(username),heads=self.heads,urllist=get_menu(username),title=title)
 
     @tornado.web.authenticated
-    def post(self,prj_id):
+    def post(self,prj_name):
+        prj_id= Projects.projects.get(prj_name,0)
+        if not prj_id:
+            r = requests.get("{url}//projects/".format(url=url),headers = headers)
+            res = r.json()
+            for i in res:
+                Projects.projects[i["name"]] = i["id"]
+            prj_id= Projects.projects.get(prj_name,0)
         username = self.get_secure_cookie("user")
         #ChatSocketHandler.send_updates("succece")
-        self.write(json.dumps(self.getDatalist(),cls=DatetimeEncoder))
-
-    def getDatalist(self):
-        datalist=[]
-        for i in self.rdsinfo:
-            datadirt=dict(zip(self.heads,i))
-            datalist.append(datadirt)
-        return datalist
+        r = requests.get("{url}//projects/{id}/repository/branches".format(url=url,id=prj_id),headers = headers)
+        res = r.json()
+        self.write(json.dumps(res,cls=DatetimeEncoder))
