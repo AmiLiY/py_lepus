@@ -15,7 +15,7 @@ from models.projects import Projects
 #from models.cmds import do_merge
 jenkins_url = 'http://jenkins.hrd800.net'
 username='yejunqing'
-password='hrdhaone8'
+password='ceshi123'
 
 url = 'http://git.hrd800.net/api/v3'
 token = 'KaK4UsgHhh6UY8W47N2R'
