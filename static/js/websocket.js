@@ -9,6 +9,7 @@ if (window.WebSocket) {
         var ta = document.getElementById('responseText');
         //ta.value = ta.value + '\n' + event.data;
         ta.innerHTML = ta.innerHTML + '\n' + event.data;
+        //console.log(document.getElementById("responseText").scrollHeight);
         document.getElementById("responseText").scrollTop = document.getElementById("responseText").scrollHeight;
     };
     socket.onopen = function(event) {

@@ -60,7 +60,7 @@ class BranchesHandler(BaseHandler):
         username = self.get_secure_cookie("user")
         curpath = "/projects"
         title = lang.get(curpath[1:],curpath[1:])
-        self.render(r'gitlab\branches.html',page=curpath,lang=lang,menus=get_menu(username),heads=self.heads,urllist=get_menu(username),title=title)
+        self.render(r'gitlab\branches.html',page=curpath,lang=lang,menus=get_menu(username),heads=self.heads,urllist=get_menu(username),title=title,prj_name=prj_name)
 
     @tornado.web.authenticated
     def post(self,prj_name):

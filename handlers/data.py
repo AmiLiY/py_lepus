@@ -9,8 +9,10 @@ class TableHandler(BaseHandler):
 
     def __init__(self,*request,**kwargs):
         super(TableHandler,self).__init__(request[0], request[1])
-        rdslist = op_cursor.execute(globals()[request[1].path[1:].replace("/",'_')+'_sql'])
-        self.heads = [c[0] for c in op_cursor.description]
+        rpath = request[1].path[1:].replace("/",'_')
+        rdslist = op_cursor.execute(globals()[ rpath + '_sql' ])
+        self.hide = globals().get( rpath + '_hide' ,[])
+        self.headers = [c[0] for c in op_cursor.description]
         self.rdsinfo = op_cursor.fetchall()
 
     @tornado.web.authenticated
@@ -18,7 +20,7 @@ class TableHandler(BaseHandler):
         username = self.get_secure_cookie("user")
         curpath = self.request.path
         title = lang.get(curpath[1:],curpath[1:])
-        self.render(curpath[1:] + '.html',page=curpath,lang=lang,menus=get_menu(username),heads=self.heads,urllist=get_menu(username),title=title)
+        self.render('datalist.html',page=curpath,lang=lang,menus=get_menu(username),headers=self.headers,hide=self.hide,title=title)
 
     @tornado.web.authenticated
     def post(self):
@@ -28,6 +30,6 @@ class TableHandler(BaseHandler):
     def getDatalist(self):
         datalist=[]
         for i in self.rdsinfo:
-            datadirt=dict(zip(self.heads,i))
+            datadirt=dict(zip(self.headers,i))
             datalist.append(datadirt)
         return datalist

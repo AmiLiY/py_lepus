@@ -1,4 +1,4 @@
-{% extends "../base.html" %}
+{% extends "base.html" %}
 <!DOCTYPE html>
 {% block header %}
     <script type="text/javascript" src={{ static_url("js/ext-all.js")}}></script>
@@ -13,10 +13,11 @@
         <form class="form-search">
             <input ng-model="searchText" type="text" >
             <button ng-click="reset()" class="btn btn-success">重置</button>
+            过滤条件：[[status]]
         </form>
         <div>
-        {% for col in heads %}
-            {{ lang.get(col,col) }}:<input onclick="h('lp_{{ col }}')" type=checkbox value="">|
+        {% for col in headers %}
+            {{ lang.get(col,col) }}:<input onclick="h('lp_{{ col }}')" type=checkbox value="" {%if col not in hide%}checked=checked{%end%}>|
         {% end %}
         </div>
         <table class="table table-striped table-hover table-bordered">
@@ -25,8 +26,8 @@
                 <th>
                     id
                 </th>
-                {% for col in heads %}
-                 <th ng-click="predicate='{{ col }}'; reverse=!reverse" class="sortBtn lp_{{ col }}">
+                {% for col in headers %}
+                 <th ng-click="predicate='{{ col }}'; reverse=!reverse" class="sortBtn lp_{{ col }}" {%if col in hide%} style="display: none;"{%end%}>
                     <span ng-if="predicate=='{{ col }}'" ng-switch on="reverse">
                     </span>
                    {{ lang.get(col,col) }}
@@ -36,9 +37,9 @@
             </thead>
             <tbody>
             <tr ng-repeat="item in data | filter:searchText | filter:status | orderBy:predicate:reverse">
-               <td>// $index + 1 // </td>
-               {% for col in heads %}
-               <td class="lp_{{ col }}"><span style="color:green;"> // item.{{ col }} // </span></td>
+               <td>[[ $index + 1 ]] </td>
+               {% for col in headers  %}
+               <td class="lp_{{ col }}" {%if col in  hide%} style="display: none;" {%end%} ng-click="statusFilter('{{col}}',item.{{ col }})"><span style="color:green;"> [[ item.{{ col }} ]] </span></td>
                {% end %}
             </tr>
             </tbody>

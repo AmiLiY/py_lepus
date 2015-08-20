@@ -13,6 +13,9 @@
         <div class="panel-heading"><span class="glyphicon glyphicon-hdd"></span> {{ title }}</div>
         <form class="form-search">
             <input type="button" id="doMerge" value="合并选中的分支">
+            <input type="button" id="doBuild" value="编译当前项目">
+            显示编译日志<input type="checkbox" name ="putlog">
+            发布<input type="checkbox" name ="deploy">
         </form>
         <table class="table table-striped table-hover table-bordered">
             <thead>
@@ -37,9 +40,9 @@
                    <input ng-switch-when="light_merge" type="checkbox" disabled="disabled">
                    <input ng-switch-default type="checkbox"  name="checkbox" >
                  </td>
-               <td>// $index + 1 // </td>
+               <td>[[ $index + 1 ]] </td>
                {% for col in heads %}
-                   <td class="lp_{{ col }}"><span style="color:green;"> // item.{{ col }} // </span></td>
+                   <td class="lp_{{ col }}"><span style="color:green;"> [[ item.{{ col }} ]] </span></td>
                {% end %}
             </tr>
             </tbody>
@@ -52,8 +55,17 @@
     </div>
 <script>
 $("document").ready(function() {
+    getProjects = function(){
+        var projects = [];
+        projects[0] = "{{prj_name}}";
+        return projects
+    };
     $("#doMerge").click(function() {
         var branchs = [];
+        var msg = {};
+        msg.cmd = "do_merge";
+        var data = {};
+        data.project = "{{prj_name}}";
         var i = 0;
         $("input[name='checkbox']:checked").each(function() {
             var str = $(this.parentNode.parentNode.getElementsByClassName("ng-binding")[1].lastChild).context.data.trim();
@@ -65,9 +77,45 @@ $("document").ready(function() {
         } else {
             console.log(branchs.join());
             $("#responseText")[0].innerHTML = $("#responseText")[0].innerHTML + "<br>选择合并<span style='color:red;'>" + branchs.join() + "</span>分支到<span style='color:green;'>light_merge</span>";
-            send("do_merge,19," + branchs)
+            data.branches = branchs;
+            msg.data = data;
+            send(JSON.stringify(msg))
         }
     })
+    $("#doBuild").click(function() {
+        var msg = {};
+        msg.cmd = "do_build";
+        var data = {};
+        data.put_console_log = 0;
+        data.deploy = 0;
+        $("input[name='deploy']:checked").each(function() {
+            data.deploy = 1;
+        })
+        $("input[name='putlog']:checked").each(function() {
+                data.put_console_log = 1;
+            })
+        projects = getProjects();
+        if (projects.length == 0) {
+            alert("未选择任何项目")
+        } else {
+            console.log(projects.join());
+            $("#responseText")[0].innerHTML = $("#responseText")[0].innerHTML + "<br>选择编译发布 <span style='color:red;'>" + projects.join() + "</span> 项目";
+            data.projects = projects;
+            msg.data = data;
+            send(JSON.stringify(msg));
+        }
+    })
+    $("input[name='putlog']").click(function() {
+      if (this.checked) {
+        var msg = {};
+        var data = {};
+        msg.cmd="put_console_log";
+        projects = getProjects();
+        data.projects = projects;
+        msg.data=data;
+        send(JSON.stringify(msg));
+        }
+       })
     $("#checkAll").click(function() {
         if (this.checked) {
             $("input[name='checkbox']:checkbox").each(function() {
