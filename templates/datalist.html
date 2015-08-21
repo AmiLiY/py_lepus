@@ -9,20 +9,21 @@
 {% end %}
 {% block content %}
     <div class="panel panel-primary">
-        <div class="panel-heading"><span class="glyphicon glyphicon-hdd"></span> {{ title }}</div>
-        <form class="form-search">
+        <div class="panel-heading" ><span class="glyphicon glyphicon-hdd"></span> {{ title }}</div>
+        <div style="position:fixed;">
+        <form class="form-search" >
             <input ng-model="searchText" type="text" >
             <button ng-click="reset()" class="btn btn-success">重置</button>
             <button ng-click="flush()" class="btn btn-success">刷新</button>
             过滤条件：[[status]]
         </form>
-        <div>
         {% for col in headers %}
             {{ lang.get(col,col) }}:<input onclick="h('lp_{{ col }}')" type=checkbox value="" {%if col not in hide%}checked=checked{%end%}>|
         {% end %}
         </div>
-        <table class="table table-striped table-hover table-bordered">
-            <thead>
+        <div style="height:40px;"></div>
+        <table class="table table-striped table-hover table-bordered" >
+            <thead >
             <tr>
                 <th>
                     id
@@ -36,6 +37,7 @@
                 {% end %}
             </tr>
             </thead>
+            <div style="height:50px;"></div>
             <tbody>
             <tr ng-repeat="item in data | filter:searchText | filter:status | orderBy:predicate:reverse">
                <td>[[ $index + 1 ]] </td>
