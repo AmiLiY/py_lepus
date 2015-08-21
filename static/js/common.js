@@ -18,6 +18,11 @@ DEMO.controller('mainCtrl',['$scope', '$http', function($scope,$http){
         $scope.status[col]=value;
     };
 
+    $scope.flush = function(){
+        $http.post(pathname,window.location.search).then(function (result) {
+            $scope.data = result.data;
+        });
+    };
     $scope.reset = function(){
         $scope.status = {};
         $scope.searchText = '';

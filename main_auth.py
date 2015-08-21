@@ -45,6 +45,7 @@ class Application(tornado.web.Application):
         (r'/logout', LogoutHandler),
         (r'/settings/index', DataHandler),
         (r'/mysql/processlist', TableHandler),
+        (r'/ecsinfo', TableHandler),
         (r'/user/index', DataHandler),
         (r'/user/add', AddUserHandler),
         (r'/user/edit/(.*)', EditUserHandler),

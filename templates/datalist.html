@@ -13,6 +13,7 @@
         <form class="form-search">
             <input ng-model="searchText" type="text" >
             <button ng-click="reset()" class="btn btn-success">重置</button>
+            <button ng-click="flush()" class="btn btn-success">刷新</button>
             过滤条件：[[status]]
         </form>
         <div>
@@ -49,10 +50,6 @@
 h = function (id){
   $("."+id).toggle();
 }
-
-$(document).ready(function(){
-//  $(".connectionString").hide();
-});
 showAdviceDetail = function (advicevalue){
 	Ext.Msg.alert('白名单',advicevalue);
 }
