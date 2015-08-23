@@ -19,7 +19,7 @@
             <button ng-repeat="count in [10,20,50,100]" type="button" ng-class="{'active':itemsPerPage==count}" ng-click="setPerPage(count)" class="btn btn-default"> 
         <span ng-bind="count" class="ng-binding"></span> </button>
         <button ng-class="prevPageDisabled()" class="btn btn-default" ng-click="prevPage()"> « Prev</button>
-        <select style="width: 70px;"  ng-model="currentPage" ng-options="(n+1+'/'+pageCount()) for n in range(pageCount())"></select>
+        <select style="width: 75px;"  ng-model="currentPage" ng-options="(n+1+'/'+pageCount()) for n in range(pageCount())"></select>
         <button ng-class="nextPageDisabled()" class="btn btn-default" ng-click="nextPage()">Next »</button>
         过滤条件：[[status]]
         </form>
