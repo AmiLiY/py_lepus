@@ -96,7 +96,7 @@ hr {
 .content {
   min-width: 400px;
   position: relative;
-  min-height: 800px;
+  min-height: 500px;
   background: #fff;
   margin-left: 180px;
   border-left: 1px solid #cccccc;

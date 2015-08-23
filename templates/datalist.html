@@ -9,17 +9,22 @@
 {% end %}
 {% block content %}
     <div class="panel panel-primary">
-        <div class="panel-heading" ><span class="glyphicon glyphicon-hdd"></span> {{ title }}</div>
-        <div style="position:fixed;">
+        <div style="position:fixed;background:#0666c5;width:100%;" class="panel-heading" ><span class="glyphicon glyphicon-hdd"></span> {{ title }}</div>
+        <div style="position:fixed;background:#0666c5;width:100%;color: #EEE;">
         <form class="form-search" >
             <input ng-model="searchText" type="text" >
             <button ng-click="reset()" class="btn btn-success">重置</button>
             <button ng-click="flush()" class="btn btn-success">刷新</button>
-            过滤条件：[[status]]
+            <button ng-click="setPerPage(data.length)" ng-class="{'active':itemsPerPage==data.length}" class="btn btn-default">[[data.length]]</button>
+            <button ng-repeat="count in [10,20,50,100]" type="button" ng-class="{'active':itemsPerPage==count}" ng-click="setPerPage(count)" class="btn btn-default"> 
+        <span ng-bind="count" class="ng-binding"></span> </button>
+        过滤条件：[[status]],当前页：[[currentPage+1]]
+        <select ng-model="currentPage" ng-options="n+1 for n in range(pageCount())"></select>
         </form>
         {% for col in headers %}
             {{ lang.get(col,col) }}:<input onclick="h('lp_{{ col }}')" type=checkbox value="" {%if col not in hide%}checked=checked{%end%}>|
         {% end %}
+        开启过滤<input ng-model="clickFilter" type=checkbox value=""checked=checked>
         </div>
         <div style="height:40px;"></div>
         <table class="table table-striped table-hover table-bordered" >
@@ -39,7 +44,7 @@
             </thead>
             <div style="height:50px;"></div>
             <tbody>
-            <tr ng-repeat="item in data | filter:searchText | filter:status | orderBy:predicate:reverse">
+            <tr ng-repeat="item in data |offset: currentPage*itemsPerPage | limitTo: itemsPerPage| filter:searchText | filter:status | orderBy:predicate:reverse">
                <td>[[ $index + 1 ]] </td>
                {% for col in headers  %}
                <td class="lp_{{ col }}" {%if col in  hide%} style="display: none;" {%end%} ng-click="statusFilter('{{col}}',item.{{ col }})"><span style="color:green;"> [[ item.{{ col }} ]] </span></td>
@@ -47,6 +52,22 @@
             </tr>
             </tbody>
         </table>
+    <div class="pagination"> 
+        <ul>
+            <li ng-class="prevPageDisabled()">
+                <a class="btn btn-default" ng-click="prevPage()"> « Prev</a>
+            </li>
+            <li ng-repeat="n in range(pageCount())"
+                ng-class="{active: n == currentPage}" ng-click="setPage(n)">
+                <a href>[[n+1]]</a>
+            </li>
+            <li ng-class="nextPageDisabled()">
+                <a class="btn btn-default" ng-click="nextPage()">Next »</a>
+            </li> 
+    
+        </ul>
+</div>
+
     </div>
 <script>
 h = function (id){
