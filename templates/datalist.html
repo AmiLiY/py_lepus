@@ -18,8 +18,10 @@
             <button ng-click="setPerPage(data.length)" ng-class="{'active':itemsPerPage==data.length}" class="btn btn-default">[[data.length]]</button>
             <button ng-repeat="count in [10,20,50,100]" type="button" ng-class="{'active':itemsPerPage==count}" ng-click="setPerPage(count)" class="btn btn-default"> 
         <span ng-bind="count" class="ng-binding"></span> </button>
-        过滤条件：[[status]],当前页：[[currentPage+1]]
-        <select ng-model="currentPage" ng-options="n+1 for n in range(pageCount())"></select>
+        <button ng-class="prevPageDisabled()" class="btn btn-default" ng-click="prevPage()"> « Prev</button>
+        <select style="width: 70px;"  ng-model="currentPage" ng-options="(n+1+'/'+pageCount()) for n in range(pageCount())"></select>
+        <button ng-class="nextPageDisabled()" class="btn btn-default" ng-click="nextPage()">Next »</button>
+        过滤条件：[[status]]
         </form>
         {% for col in headers %}
             {{ lang.get(col,col) }}:<input onclick="h('lp_{{ col }}')" type=checkbox value="" {%if col not in hide%}checked=checked{%end%}>|
