@@ -14,7 +14,7 @@
 <div class="row-fluid">
  
 <div class="btn-toolbar">
-    <a class="btn btn-primary " href="/menu/add"><i class="icon-plus"></i> { lang["add"] }}</a>
+    <a class="btn btn-primary " href="/menu/add"><i class="icon-plus"></i> {{ lang["add"] }}</a>
   <div class="btn-group"></div>
 </div>
 
@@ -34,7 +34,7 @@
 {% if datalist %}
 {% for item in datalist %}
      <tr>
-          <td>{{item['menu_title'] }}{{item['menu_title'] }}</td>
+          <td>{{item['menu_title'] }}</td>
           <td>{{item['menu_url'] }}</td>
           <td>{{item['menu_icon'] }}</td>
           <td>{{item['status'] }}</td>

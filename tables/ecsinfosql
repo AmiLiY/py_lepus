@@ -1,0 +1,41 @@
+/*
+SQLyog Ultimate v12.09 (64 bit)
+MySQL - 5.6.24-log : Database - operations
+*********************************************************************
+*/
+
+/*!40101 SET NAMES utf8 */;
+
+/*!40101 SET SQL_MODE=''*/;
+
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+/*Table structure for table `ecsinfo` */
+
+DROP TABLE IF EXISTS `ecsinfo`;
+
+CREATE TABLE `ecsinfo` (
+  `id` int(20) NOT NULL AUTO_INCREMENT,
+  `cpu` int(5) DEFAULT NULL,
+  `memory` varchar(10) DEFAULT NULL,
+  `device` varchar(20) DEFAULT NULL,
+  `bindWidth` varchar(20) DEFAULT NULL,
+  `createTime` datetime DEFAULT NULL,
+  `hostname` varchar(50) DEFAULT NULL,
+  `internetIp` varchar(50) DEFAULT NULL,
+  `intranetIp` varchar(50) NOT NULL,
+  `isWin` int(5) DEFAULT NULL,
+  `osName` varchar(100) DEFAULT NULL,
+  `osType` varchar(100) DEFAULT NULL,
+  `status` varchar(20) DEFAULT NULL,
+  UNIQUE KEY `intranetIp` (`intranetIp`),
+  UNIQUE KEY `internetIp` (`internetIp`),
+  KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=15782 DEFAULT CHARSET=utf8;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;

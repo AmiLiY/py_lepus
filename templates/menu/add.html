@@ -1,0 +1,87 @@
+{% extends "../base.html" %}
+{% block content %}
+<div class="header">  
+            <h1 class="page-title">{{ lang["menu"] }} {{ lang["add"] }}</h1>
+</div>
+     
+<ul class="breadcrumb">
+            <li><a href="/">{{ lang["home"] }}</a> <span class="divider">/</span></li>
+            <li class="active">{{ lang["permission_system"] }}</li><span class="divider">/</span></li>
+            <li class="active">{{ lang["menu"] }}</li>
+</ul>
+
+<div class="container-fluid">
+<div class="row-fluid">
+
+<form name="form" class="form-horizontal" method="post" action="/menu/add" >
+<input type="hidden" name="submit" value="add"/> 
+<div class="btn-toolbar">
+    <button type="submit" class="btn btn-primary"><i class="icon-save"></i> {{ lang["save"] }}</button>
+    <a class="btn btn " href="/menu/index"><i class="icon-list"></i> {{ lang["list"] }}</a>
+  <div class="btn-group"></div>
+</div>
+
+{% if error_code!=0 %}
+<div class="alert alert-error">
+<button type="button" class="close" data-dismiss="alert">×</button>
+{{ validation_errors }}
+</div>
+{% end %}
+
+<div class="well">
+   <div class="control-group">
+    <label class="control-label" for="">*{{ lang["parent_menu"] }}</label>
+    <div class="controls">
+        <select name="parent_id" id="parent_id" >
+         <option value="0"  >{{ lang["top_menu"] }}</option>
+          {% if menu_record_tree %}
+          {% for item in menu_record_tree %}
+          <option value="{{ item['menu_id'] }}"  >{{ item['menu_title'] }}</option>
+          {% end %}
+          {% end %}
+        </select>
+    </div>
+   </div>
+   <div class="control-group">
+    <label class="control-label" for="">*{{ lang["menu"] }}</label>
+    <div class="controls">
+      <input type="text" id="menu_title"  name="menu_title" value="{{ set_value.get('menu_title',"") }}" >
+    </div>
+   </div>
+   <div class="control-group">
+    <label class="control-label" for="">*{{ lang["url"] }}</label>
+    <div class="controls">
+      <input type="text" id="menu_url"  name="menu_url" value="{{ set_value.get('menu_url',"") }}" >
+    </div>
+   </div>
+   <!--
+   <div class="control-group">
+    <label class="control-label" for="">{{ lang["icon"] }}</label>
+    <div class="controls">
+      <input type="text" id="menu_icon"  name="menu_icon" value="{{ set_value.get('menu_icon',"icon-dashboard") }}" >
+    </div>
+   </div>
+
+   <div class="control-group">
+    <label class="control-label" for="">{{ lang["display_order"] }}</label>
+    <div class="controls">
+      <input type="text" id="display_order"  name="display_order" value="{{ set_value.get('display_order',"") }}" >
+    </div>
+   </div>
+   -->
+   <div class="control-group">
+    <label class="control-label" for="">{{ lang["status"] }}</label>
+    <div class="controls">
+        <select name="status" id="status" >
+         <option value="1"  >{{ lang["display"] }}</option>
+         <option value="0"  >{{ lang["hidden"] }}</option>
+        </select>
+    </div>
+   </div>
+   
+   
+</div>
+
+</form>
+
+{% end %}

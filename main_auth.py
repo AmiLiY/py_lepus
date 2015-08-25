@@ -10,10 +10,11 @@ import tornado.web
 import md5
 from language.zh_hans.mtop_menu_lang import lang
 from tornado.options import define, options
-from handlers.data import TableHandler
+from handlers.data import TableHandler,Executemany
 from handlers.gitlab import ProjectsHandler,BranchesHandler,LightMergeHandler
 from handlers.base import BaseHandler,LoginHandler,LogoutHandler
 from handlers.message import ChatSocketHandler
+import models
 from models.tools import user_map,get_menu,op_cursor
 
 url = 'http://git.hrd800.net/api/v3'
@@ -31,11 +32,27 @@ privilege_index_sql = ("SELECT `privilege_id`,`privilege_title`,am.`menu_url` `a
                         "ORDER BY ap.`display_order`")
 settings_index_sql = "select 1"
 add_user_sql = "INSERT INTO `operations`.`admin_user` (`username`, `password`, `realname`, `email`, `mobile`,`status`,`create_time`) VALUES ('{username}', '{password}', '{realname}', '{email}', '{mobile}', '{status}', now());"
+add_menu_sql = """INSERT INTO `operations`.`admin_menu` (`menu_title`, `menu_level`, `parent_id`, `menu_url`, `menu_icon`, `system`, `status`, `display_order`, `create_time`) 
+SELECT '{menu_title}', '{menu_level}', '{parent_id}', '{menu_url}', '{menu_icon}', '0', '1', IFNULL(MAX(`display_order`),0)+1, NOW()
+FROM `operations`.`admin_menu` WHERE `parent_id`={parent_id}"""
+add_privilege_sql = """
+INSERT INTO `operations`.`admin_privilege` (`privilege_title`, `menu_id`, `action`, `display_order`) 
+select `menu_title`, `menu_id`, `menu_url`,`display_order`
+from `operations`.`admin_menu` where `menu_title`='{menu_title}'; 
+"""
+add_provilege_to_role_sql = """
+INSERT INTO `operations`.`admin_role_privilege` (`role_id`, `privilege_id`)
+select 1,`privilege_id` from `operations`.`admin_privilege` where `privilege_title`='{menu_title}';
+"""
 user_info_sql = "SELECT * FROM `admin_user` WHERE user_id={user_id}"
 update_user_sql = "update `admin_user` set `password`='{password}',`realname`='{realname}',`email`='{email}', `mobile`='{mobile}',`status`='{status}' where `user_id`='{user_id}'"
 update_user_sql1 = "update `admin_user` set `realname`='{realname}',`email`='{email}', `mobile`='{mobile}',`status`='{status}' where `user_id`='{user_id}'"
 delete_user_sql = "delete from `admin_user` where user_id={user_id}"
+user_forever_delete_sql = "delete from `admin_user` where user_id={id}"
+menu_forever_delete_sql = "delete from `admin_menu` where menu_id={id};"
 menu_index_sql = "SELECT * FROM `admin_menu`"
+privilege_add_data_sql = "SELECT menu_id,menu_title FROM `admin_menu` WHERE `parent_id`!=0"
+
 
 class Application(tornado.web.Application):
     def __init__(self):
@@ -46,18 +63,24 @@ class Application(tornado.web.Application):
         (r'/settings/index', DataHandler),
         (r'/mysql/processlist', TableHandler),
         (r'/ecsinfo', TableHandler),
+        (r'/process', TableHandler),
+        (r'/appinfo', TableHandler),
         (r'/user/index', DataHandler),
         (r'/user/add', AddUserHandler),
         (r'/user/edit/(.*)', EditUserHandler),
-        (r'/user/forever_delete/(.*)', DeleteUserHandler),
+        (r'/user/forever_delete/(.*)', DeleteHandler),
+        (r'/menu/forever_delete/(.*)', DeleteHandler),
         (r'/user/edit', EditUserHandler),
         (r'/role/index', DataHandler),
         (r'/privilege/index', DataHandler),
+        (r'/privilege/add', AddHandler),
         (r'/projects/?', ProjectsHandler),
         (r'/projects/(.*)/branches', BranchesHandler),
         (r'/projects/lightmerge', LightMergeHandler),
         (r"/websocket", ChatSocketHandler), 
         (r"/menu/index", DataHandler), 
+        (r"/menu/add", AddMenuHandler), 
+        (r"/insert", Executemany), 
         ]
         tornado.web.Application.__init__(
             self, handlers, debug=True,
@@ -81,7 +104,6 @@ class DataHandler(BaseHandler):
         curpath =  self.request.path
         #user = User()
         datalist = self.get_user_list()
-        print datalist
         self.render(curpath[1:]+'.html',page=curpath,menus=get_menu(username),lang=lang,datalist = datalist)
         
     def get_user_list(self):
@@ -89,7 +111,6 @@ class DataHandler(BaseHandler):
         users = op_cursor.fetchall()
         head = [c[0] for c in op_cursor.description]
         datalist = []
-        print users
         for user in users:
             datalist.append(dict(zip(head,user)))
         return datalist
@@ -140,13 +161,85 @@ class EditUserHandler(BaseHandler):
         record = dict(zip(head,userinfo))
         return record
 
-class DeleteUserHandler(BaseHandler):
+class DeleteHandler(BaseHandler):
     @tornado.web.authenticated
-    def get(self,user_id):
+    def get(self,id):
         username = self.get_secure_cookie("user")
         curpath =  self.request.path
-        op_cursor.execute(delete_user_sql.format(user_id=user_id))
-        self.redirect("/user/index")
+        func = curpath[1:].split("/")[0]
+        op_cursor.execute(globals()[ "_".join(curpath[1:].split("/")[:-1]) + '_sql' ].format(id=id))
+        self.redirect("/{0}/index".format(func))
+
+
+class AddMenuHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        username = self.get_secure_cookie("user")
+        curpath =  self.request.path
+        menu_record_tree = self.menu_record_tree()
+        set_value = {}
+        self.render(curpath[1:]+'.html',page="/menu/index",menus=get_menu(username),set_value=set_value,menu_record_tree=menu_record_tree,lang=lang,error_code=0,validation_errors='')
+
+    def post(self):
+        username = self.get_secure_cookie("user")
+        curpath =  self.request.path
+        menu_title = self.get_argument('menu_title').encode("utf8")
+        menu_url = self.get_argument('menu_url')
+        parent_id = int(self.get_argument('parent_id'))
+        status = int(self.get_argument('status'))
+        if parent_id==0:
+            menu_level = 1
+            menu_icon = "icon-dashboard"
+        else:
+            menu_level = 2
+            menu_icon = "icon-list"
+        op_cursor.execute(add_menu_sql.format(menu_title=menu_title,menu_url=menu_url,parent_id=parent_id,menu_level=menu_level,menu_icon=menu_icon))
+        if parent_id!=0:
+            op_cursor.execute(add_privilege_sql.format(menu_title=menu_title))
+            op_cursor.execute(add_provilege_to_role_sql.format(menu_title=menu_title))
+            models.tools.user_menus[username] = models.tools._get_menu(username)
+
+        self.redirect("/menu/index")
+        
+    def menu_record_tree(self):
+        datalist = []
+        op_cursor.execute("SELECT menu_id,menu_title FROM `admin_menu` WHERE `parent_id`=0")
+        parent_menus = op_cursor.fetchall()
+        head = [c[0] for c in op_cursor.description]
+        for menus in parent_menus:
+            datalist.append(dict(zip(head,menus)))
+        return datalist
+
+
+class AddHandler(BaseHandler):
+
+    def __init__(self,*request,**kwargs):
+        super(AddHandler,self).__init__(request[0], request[1])
+        self.rpath = "_".join(request[1].path[1:].split("/"))
+        func = request[1].path[1:].split("/")[0]
+        self.page = "/{0}/index".format(func)
+
+    @tornado.web.authenticated
+    def get(self):
+        username = self.get_secure_cookie("user")
+        curpath =  self.request.path
+        datalist = self.getDatalist()
+        set_value = {}
+        self.render(curpath[1:]+'.html',page=self.page,menus=get_menu(username),set_value=set_value,datalist=datalist,lang=lang,error_code=0,validation_errors='')
+
+    def post(self):
+        self.request.arguments 
+        op_cursor.execute(globals()[self.rpath + "_sql"].format(menu_title=menu_title,menu_url=menu_url,parent_id=parent_id,menu_level=menu_level,menu_icon=menu_icon))
+        self.redirect(self.page)
+
+    def getDatalist(self):
+        datalist = []
+        op_cursor.execute(globals()[self.rpath + "_data_sql"])
+        parent_menus = op_cursor.fetchall()
+        head = [c[0] for c in op_cursor.description]
+        for menus in parent_menus:
+            datalist.append(dict(zip(head,menus)))
+        return datalist
 
 
 def ping_db():

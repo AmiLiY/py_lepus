@@ -1,0 +1,71 @@
+{% extends "../base.html" %}
+{% block content %}
+<div class="header">  
+            <h1 class="page-title">{{ lang["privilege"] }} {{ lang["add"] }}</h1>
+</div>
+     
+<ul class="breadcrumb">
+            <li><a href="/">{{ lang["home"] }}</a> <span class="divider">/</span></li>
+            <li class="active">{{ lang["permission_system"] }}</li><span class="divider">/</span></li>
+            <li class="active">{{ lang["privilege"] }}</li>
+</ul>
+
+<div class="container-fluid">
+<div class="row-fluid">
+
+<form name="form" class="form-horizontal" method="post" action="/privilege/add" >
+<input type="hidden" name="submit" value="add"/> 
+<div class="btn-toolbar">
+    <button type="submit" class="btn btn-primary"><i class="icon-save"></i> {{ lang["save"] }}</button>
+    <a class="btn btn " href="/privilege/index"><i class="icon-list"></i> {{ lang["list"] }}</a>
+  <div class="btn-group"></div>
+</div>
+
+{% if error_code!=0 %}
+<div class="alert alert-error">
+<button type="button" class="close" data-dismiss="alert">×</button>
+{{ validation_errors }}
+</div>
+{% end %}
+
+<div class="well">
+   
+   <div class="control-group">
+    <label class="control-label" for="">*{{ lang["privilege_title"] }}</label>
+    <div class="controls">
+      <input type="text" id="privilege_title"  name="privilege_title" value="{{ set_value.get('privilege_title',"") }}" >
+    </div>
+   </div>
+   <div class="control-group">
+    <label class="control-label" for="">*{{ lang["action"] }}</label>
+    <div class="controls">
+      <input type="text" id="action"  name="action" value="{{ set_value.get('action',"") }}" >
+    </div>
+   </div>
+   <div class="control-group">
+    <label class="control-label" for="">{{ lang["menu"] }}</label>
+    <div class="controls">
+        <select name="menu_id" id="menu_id" >
+         <option value="0"  >{{ lang["top_menu"] }}</option>
+          {% if datalist %}
+          {% for item in datalist %}
+          <option value="{{ item['menu_id'] }}"  >{{ item['menu_title'] }}</option>
+          {% end %}
+          {% end %}
+        </select>
+    </div>
+   </div>
+   <div class="control-group">
+    <label class="control-label" for="">{{ lang["display_order"] }}</label>
+    <div class="controls">
+      <input type="text" id="display_order"  name="display_order" value="{{ set_value.get('display_order',"") }}" >
+    </div>
+   </div>
+   
+</div>
+
+
+
+</form>
+
+{% end %}
